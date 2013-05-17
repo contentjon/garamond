@@ -1,0 +1,15 @@
+.project {
+
+  min-width:250px;
+  min-height:150px;
+  margin-right:10px;
+}
+
+.relative {
+  position:relative;
+}
+
+.bottom {
+  position:absolute;
+  bottom:15px;
+}
