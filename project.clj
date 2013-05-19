@@ -11,11 +11,17 @@
                                           [mocha-latte "0.1.0"]]}}
   :cljsbuild
   {:builds
-   [{:source-paths ["src"],
-     :id "dev",
+   [{:source-paths ["src/garamond/"],
+     :id "parser",
      :compiler
      {:pretty-print  true,
-      :output-to     "garamond.js",
+      :output-to     "parser.js",
+      :optimizations :simple
+      :target        :nodejs}}
+    {:source-paths ["src/renderer/"],
+     :id "renderer",
+     :compiler
+     {:pretty-print  true,
+      :output-to     "renderer.js",
       :optimizations :simple
       :target        :nodejs}}]})
-

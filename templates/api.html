@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="resources/public/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="resources/public/css/garamond.css" />
+    <!-- script src="http://code.jquery.com/jquery-1.9.1.min.js"></script -->
+    <script src="js/bootstrap.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <ul style="list-style:none;margin:0px;">
+        {{#functions}}
+        <li class="well">
+          <strong>({{name}}<i>{{#args}} {{name}}{{/args}}</i>)</strong>
+          <p>
+            {{description}}
+
+            <dl>
+              {{#args}}
+              <dt>{{name}}</dt>
+              <dd>{{description}}</dd>
+              {{/args}}
+            </dl>
+          </p>
+        </li>
+        {{/functions}}
+      </ul>
+    </div>
+  </body>
+</html>
