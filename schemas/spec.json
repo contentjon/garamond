@@ -1,0 +1,46 @@
+{
+    "name":        "api-doc",
+    "description": "A schema for API documentation",
+    "type":        "object",
+    "properties": {
+        "type": {
+            "type":     "string",
+            "enum":     ["hierarchy", "function", "field"],
+            "required": true
+        },
+        "tag": {
+            "type": "string",
+            "description":
+              "An additional tag field to annotate domain information about a
+               documentation element."
+        },
+        "name": {
+            "type":     "string",
+            "required": true
+        },
+        "source": {
+            "type": "string",
+            "description": "The source of the documented piece of code"
+        },
+        "doc": {
+            "type":     "string",
+            "required": true
+        },
+        "parameters": {
+            "type": "array",
+            "dependencies" : {
+                "type": {
+                    "type": "string",
+                    "enum": ["function"]
+                }
+            }
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "doc":  { "type": "string" }
+                }
+            }
+        }
+    }
+}
