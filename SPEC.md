@@ -40,3 +40,7 @@ run of the source parser might produce output like this:
 This stream of JSON objects is then fed to a generator process, which
 might insert the information into a document template or use it in some 
 other way.
+
+The generator process will simply connect a configurable parser and
+generator through a pipe to derive a desired documentation format from
+a given source.
