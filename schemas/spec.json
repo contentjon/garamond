@@ -11,16 +11,19 @@
         "tag": {
             "type": "string",
             "description":
-              "An additional tag field to annotate domain information about a
-               documentation element."
+              "An additional tag field to annotate domain information about a documentation element."
         },
         "name": {
             "type":     "string",
             "required": true
         },
         "source": {
-            "type": "string",
-            "description": "The source of the documented piece of code"
+            "type": "object",
+            "description": "The source of the documented piece of code",
+            "properties": {
+                "file": { "type": "string", "required": true },
+                "line": { "type": "integer" }
+            }
         },
         "doc": {
             "type":     "string",
@@ -28,19 +31,23 @@
         },
         "parameters": {
             "type": "array",
-            "dependencies" : {
-                "type": {
-                    "type": "string",
-                    "enum": ["function"]
-                }
-            }
+            "description":
+              "An array of parameters to a documentation item of type function",
             "items": {
                 "type": "object",
                 "properties": {
-                    "name": { "type": "string" },
-                    "doc":  { "type": "string" }
+                    "name": { "type": "string", "required":true },
+                    "doc":  { "type": "string", "required":true }
                 }
             }
         }
-    }
+    },
+    "dependencies" : {
+        "parameters": {
+            "properties": {
+                "type": {"enum": ["function"]}
+            }
+        }
+    },
+    "additionalProperties":false
 }
