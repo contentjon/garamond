@@ -8,7 +8,7 @@
             "enum":     ["hierarchy", "function", "field"],
             "required": true
         },
-        "tag": {
+        "domain": {
             "type": "string",
             "description":
               "An additional tag field to annotate domain information about a documentation element."
