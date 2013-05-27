@@ -37,7 +37,7 @@
                 "type": "object",
                 "properties": {
                     "name": { "type": "string", "required":true },
-                    "doc":  { "type": "string", "required":true }
+                    "doc":  { "type": "string" }
                 }
             }
         }
