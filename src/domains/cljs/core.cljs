@@ -32,10 +32,10 @@
     doc
     ""))
 
-(defn- get-defn-args [x]
-  (let [syms (if (vector? (nth x 2))
-               (nth x 2)
-               (nth x 3))]
+(defn- get-fn-args [x]
+  (let [syms (if (vector? (nth x 1))
+               (nth x 1)
+               (nth x 2))]
     (-> (map (fn [x]
                (let [n (cond
                          (symbol? x) (name x)
@@ -125,6 +125,14 @@
     (name sym)
     (maybe-doc doc)
     (meta sym)))
+
+(defmethod analyze-form 'defprotocol [[_ sym doc & forms]]
+  (cons (make-doc-entry :hierachy
+          :protocol
+          (name sym)
+          (maybe-doc doc))
+        ;; TODO: add protocol methods to the stream
+        []))
 
 (defn- form-seq
   "Create a seq from a string of ClojureScript forms"
