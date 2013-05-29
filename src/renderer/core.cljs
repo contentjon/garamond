@@ -7,7 +7,6 @@
 (aset mu "root" "templates")
 
 (defn render [description]
-  (.log js/console (clj->js description))
   (let [out    (atom "")
         stream (.compileAndRender mu "api.html" (clj->js description))]
     (.on stream "data"

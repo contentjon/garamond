@@ -15,13 +15,13 @@
      :id "parser",
      :compiler
      {:pretty-print  true,
-      :output-to     "domains/cljs.js",
+      :output-to     "domains/cljs",
       :optimizations :simple
       :target        :nodejs}}
     {:source-paths ["src/renderer/"],
      :id "renderer",
      :compiler
      {:pretty-print  true,
-      :output-to     "generators/renderer.js",
+      :output-to     "generators/renderer",
       :optimizations :simple
       :target        :nodejs}}]})
