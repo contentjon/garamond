@@ -1,29 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <link rel="stylesheet" type="text/css" href="resources/public/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="resources/public/css/garamond.css" />
-    <!-- script src="http://code.jquery.com/jquery-1.9.1.min.js"></script -->
-    <script src="js/bootstrap.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   </head>
   <body>
+    <header class="intro">
+      <div class="container">
+        <h1>My Library</h1>
+        <p>Create API documentation with style</p>
+      </div>
+    </header>
     <div class="container">
-      <ul style="list-style:none;margin:0px;">
-        {{#functions}}
-        <li class="well">
-          <strong>({{name}}<i>{{#parameters}} {{name}}{{/parameters}}</i>)</strong>
-          <p>
-            {{{doc}}}
-            <dl>
-              {{#detail}}
-              <dt>{{name}}</dt>
-              <dd>{{{doc}}}</dd>
-              {{/detail}}
-            </dl>
-          </p>
-        </li>
-        {{/functions}}
-      </ul>
+      <div class="row">
+        <div class="span3">
+          <ul class="nav nav-list namespaces"
+              data-spy="affix"
+              data-offset-top="210"
+              data-offset-bottom="270">
+            <li class="nav-header">Name Spaces</li>
+            {{#namespaces}}
+            <li><a href="#{{name}}">{{name}}</a></li>
+            {{/namespaces}}
+          </ul>
+        </div>
+        <div class="span9">
+          {{#namespaces}}
+          <section>
+            <div class="page-header" id="{{name}}">
+              <h1>{{name}}</h1>
+              <p>{{{doc}}}</p>
+            </div>
+            <ul style="list-style:none;margin:0px;">
+              {{#functions}}
+              <li class="well">
+                <strong>({{name}}<i>{{#parameters}} {{name}}{{/parameters}}</i>)</strong>
+                <p>
+                  {{{doc}}}
+                  <dl>
+                    {{#detail}}
+                    <dt>{{name}}</dt>
+                    <dd>{{{doc}}}</dd>
+                    {{/detail}}
+                  </dl>
+                </p>
+              </li>
+              {{/functions}}
+            </ul>
+          </section>
+          {{/namespaces}}
+        </div>
+      </div>
     </div>
+    <script src="js/bootstrap.js"></script>
   </body>
 </html>

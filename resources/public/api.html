@@ -3,48 +3,100 @@
   <head>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="css/garamond.css" />
-    <!-- script src="http://code.jquery.com/jquery-1.9.1.min.js"></script -->
-    <script src="js/bootstrap.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   </head>
   <body>
-    <div class="namespaces well">
-      <ul class="nav nav-list">
-        <li class="nav-header">Name Spaces</li>
-        <li><a href="#foo">name.space.foo</a></li>
-        <li><a href="#bar">name.space.bar</a></li>
-      </ul>
-    </div>
+    <header class="intro">
+      <div class="container">
+        <h1>My Library</h1>
+        <p>Create API documentation with style</p>
+      </div>
+    </header>
     <div class="container">
       <div class="row">
-        <div class="offset2 span8">
-          <h2 id="foo">name.space.foo</h2>
-          <ul style="list-style:none;margin:0px;">
-            <li class="well">
-              <strong>(parse <i>s callback</i>)</strong>
-              <p>
-                Parses a file with ClojureScript forms and prints
-                documentation entries in JSON format, when doc strings
-                are provided
-                
-                <dl>
-                  <dt>s</dt>
-                  <dd>A string with ClojureScript forms</dd>
-                  <dt>callback</dt>
-                  <dd>A function to be called when all forms of the file have been processed</dd>
-                </dl>
-              </p>
-            </li>
-            <li class="well">
-              <strong>(form-seq <i>s</i>)</strong>
-              <p>
-                Create a seq from a string of ClojureScript forms
-              </p>
-            </li>
-            <li class="well">
-          </li>
+        <div class="span3">
+          <ul class="nav nav-list namespaces"
+              data-spy="affix"
+              data-offset-top="210"
+              data-offset-bottom="270">
+            <li class="nav-header">Name Spaces</li>
+            <li><a href="#foo">name.space.foo</a></li>
+            <li><a href="#bar">name.space.bar</a></li>
           </ul>
+        </div>
+        <div class="span9">
+          <section>
+            <div class="page-header" id="foo">
+              <h1>name.space.foo</h1>
+              <p>The foo name space contains all the foo you will ever
+                 need. It will provide at least 80% of the daily
+                 recommended dose of foo</p>
+            </div>
+            <ul style="list-style:none;margin:0px;">
+              <li class="well">
+                <strong>(parse <i>s callback</i>)</strong>
+                <p>
+                  Parses a file with ClojureScript forms and prints
+                  documentation entries in JSON format, when doc strings
+                  are provided
+                  
+                  <dl>
+                    <dt>s</dt>
+                    <dd>A string with ClojureScript forms</dd>
+                    <dt>callback</dt>
+                    <dd>A function to be called when all forms of the file have been processed</dd>
+                  </dl>
+                </p>
+              </li>
+              <li class="well">
+                <strong>(form-seq <i>s</i>)</strong>
+                <p>
+                  Create a seq from a string of ClojureScript forms
+                </p>
+              </li>
+              <li class="well">
+              </li>
+            </ul>
+          </section>
+          <section>
+            <div class="page-header" id="bar">
+              <h1>name.space.bar</h1>
+              <p>
+                Without the bar name space there would just not be as
+                many bars available to use in the rest of the system.
+                To avoid a strategic bar shortage later no, we
+                implemented this name space as a safe guard.
+              </p>
+            </div>
+            <ul style="list-style:none;margin:0px;">
+              <li class="well">
+                <strong>(parse <i>s callback</i>)</strong>
+                <p>
+                  Parses a file with ClojureScript forms and prints
+                  documentation entries in JSON format, when doc strings
+                  are provided
+                  
+                  <dl>
+                    <dt>s</dt>
+                    <dd>A string with ClojureScript forms</dd>
+                    <dt>callback</dt>
+                    <dd>A function to be called when all forms of the file have been processed</dd>
+                  </dl>
+                </p>
+              </li>
+              <li class="well">
+                <strong>(form-seq <i>s</i>)</strong>
+                <p>
+                  Create a seq from a string of ClojureScript forms
+                </p>
+              </li>
+              <li class="well">
+              </li>
+            </ul>
+          </section>
         </div>
       </div>
     </div>
+    <script src="js/bootstrap.js"></script>
   </body>
 </html>

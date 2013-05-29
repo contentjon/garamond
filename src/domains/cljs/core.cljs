@@ -32,10 +32,10 @@
     doc
     ""))
 
-(defn- get-fn-args [x]
-  (let [syms (if (vector? (nth x 1))
-               (nth x 1)
-               (nth x 2))]
+(defn- get-defn-args [x]
+  (let [syms (if (vector? (nth x 2))
+               (nth x 2)
+               (nth x 3))]
     (-> (map (fn [x]
                (let [n (cond
                          (symbol? x) (name x)
@@ -131,7 +131,6 @@
           :protocol
           (name sym)
           (maybe-doc doc))
-        ;; TODO: add protocol methods to the stream
         []))
 
 (defn- form-seq

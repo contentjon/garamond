@@ -7,6 +7,7 @@
 (aset mu "root" "templates")
 
 (defn render [description]
+  (.log js/console (clj->js description))
   (let [out    (atom "")
         stream (.compileAndRender mu "api.html" (clj->js description))]
     (.on stream "data"
@@ -33,24 +34,32 @@
                  (:parameters f)))
        fns))
 
-(defn mustache-model [description]
-  (-> description
-      (update-in [:functions] (partial filter :public))
-      (update-in [:functions] generate-fn-detail)))
+(defn update-function-model [events]
+  (->> events
+       (filter #(= (:type %) "function"))
+       (filter :public)
+       (generate-fn-detail)))
+
+(defn mustache-model [events]
+  (let [namespaces (partition-by #(= (:domain %) "ns") events)]
+    (reduce (fn [description [ns functions]]
+              (let [functions (update-function-model functions)]
+                (update-in description
+                           [:namespaces]
+                           conj
+                           (assoc (first ns) :functions functions))))
+            {:namespaces []}
+            (partition 2 namespaces))))
 
 (set! *main-cli-fn*
   (fn []
-    (let [parser      (.parse json)
-          description (atom {})]
+    (let [parser (.parse json)
+          events (atom [])]
       (.pipe (.-stdin js/process) parser)
       (.on parser "root"
            (fn [doc]
              (let [doc (js->clj doc :keywordize-keys true)]
-               (when (= (:type doc) "function")
-                 (swap! description
-                   update-in
-                   [:functions]
-                   conj doc)))))
+               (swap! events conj doc))))
       (.on parser "end"
            (fn []
-             (render (mustache-model @description)))))))
+             (render (mustache-model @events)))))))
