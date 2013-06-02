@@ -7,14 +7,25 @@
   "Require FS from NodeJS"
   (js/require "fs"))
 
+(def doc-entry-type #{:hierarchy :field :function})
+
 (defn make-doc-entry
   "Constructs a new doc entry map
 
-   :param t      The type of the object
-   :param domain A domain tag for the entry, such as :fn or :ns
-   :param n      The name of the new entry
-   :param doc    A doc string, which will eventually go into the generated output"
+   @param t      The type of the object. Possible values are :hierarchy,
+                 :field or :function
+   @param domain A domain tag for the entry, such as :fn or :ns
+   @param n      The name of the new entry, usually some symbol name
+   @param doc    A doc string, which will eventually go into the generated
+                 output
+
+   @return Returns a new documentation object, which can be converted
+           to JSON via clj->js
+
+   @code
+   (make-doc-entry :hierarchy :ns my.ns \"A doc string\")"
   [t domain n doc {:keys [private] :or {private false}}]
+  (.log js/console (:doc (meta t)))
   {:type   t
    :domain domain
    :name   n

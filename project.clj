@@ -24,4 +24,11 @@
      {:pretty-print  true,
       :output-to     "generators/renderer",
       :optimizations :simple
+      :target        :nodejs}}
+    {:source-paths ["src/garamond/"],
+     :id "garamond",
+     :compiler
+     {:pretty-print  true,
+      :output-to     "garamond",
+      :optimizations :simple
       :target        :nodejs}}]})

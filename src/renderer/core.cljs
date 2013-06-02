@@ -1,4 +1,4 @@
-(ns garamond.core)
+(ns renderer.core)
 
 (def fs   (js/require "fs"))
 (def mu   (js/require "mu2"))
