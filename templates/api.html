@@ -20,13 +20,13 @@
               data-offset-top="210"
               data-offset-bottom="270">
             <li class="nav-header">Name Spaces</li>
-            {{#namespaces}}
+            {{#roots}}
             <li><a href="#{{name}}">{{name}}</a></li>
-            {{/namespaces}}
+            {{/roots}}
           </ul>
         </div>
         <div class="span9">
-          {{#namespaces}}
+          {{#roots}}
           <section>
             <div class="page-header" id="{{name}}">
               <h1>{{name}}</h1>
@@ -49,7 +49,7 @@
               {{/functions}}
             </ul>
           </section>
-          {{/namespaces}}
+          {{/roots}}
         </div>
       </div>
     </div>

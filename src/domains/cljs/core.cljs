@@ -1,13 +1,9 @@
-(ns garamond.domain.cljs
+(ns garamond.domain.cljs.core
   "Contains the ClojureScript parser of the Garamond documentation generator"
   (:require [clojure.string :as str]
             [cljs.reader    :as reader]))
 
-(def ^:private fs
-  "Require FS from NodeJS"
-  (js/require "fs"))
-
-(def doc-entry-type #{:hierarchy :field :function})
+(def ^:private fs (js/require "fs"))
 
 (defn make-doc-entry
   "Constructs a new doc entry map
@@ -17,15 +13,8 @@
    @param domain A domain tag for the entry, such as :fn or :ns
    @param n      The name of the new entry, usually some symbol name
    @param doc    A doc string, which will eventually go into the generated
-                 output
-
-   @return Returns a new documentation object, which can be converted
-           to JSON via clj->js
-
-   @code
-   (make-doc-entry :hierarchy :ns my.ns \"A doc string\")"
+                 output"
   [t domain n doc {:keys [private] :or {private false}}]
-  (.log js/console (:doc (meta t)))
   {:type   t
    :domain domain
    :name   n
@@ -56,41 +45,67 @@
              syms)
         (vec))))
 
-(defmulti handle-doc-info
-  (fn [token entry line]
-    token))
+(defn words [s]
+  (str/join " " s))
 
-(defmethod handle-doc-info :param
-  [_ entry line]
-  (let [line      (-> line str/trim (str/replace #" +" " "))
-        [_ n doc] (str/split line #" " 3)
-        index     (->> (:parameters entry)
-                       (keep-indexed (fn [i v] (when (= (:name v) n) i)))
-                       (first))]
-    (if index
-      (assoc-in entry [:parameters index :doc] doc)
-      entry)))
-
-(defn- meta-info [line]
+(defn- meta-info [s]
   (try
-    (let [token (reader/read-string line)]
-      (when (keyword? token)
-        token))
+    (when (string? s)
+      (when-let [match (.match s #"^@([a-z]+)")]
+        (keyword (aget match 1))))
     (catch js/Error e)))
 
+(defn until-next-meta [in]
+  (split-with (complement meta-info) (drop 1 in)))
+
+(defmulti handle-doc-info
+  (fn [entry in]
+    (meta-info (first in))))
+
+(defmethod handle-doc-info :default
+  [entry in]
+  [entry (rest in)])
+
+(defmethod handle-doc-info :param
+  [entry in]
+  (let [[[n & doc] rest] (until-next-meta in)
+        doc              (words doc)
+        index            (->> (:parameters entry)
+                              (keep-indexed (fn [i v] (when (= (:name v) n) i)))
+                              (first))]
+    (if index
+      [(assoc-in entry [:parameters index :doc] doc) rest]
+      [entry rest])))
+
+(defn- simplify [s]
+  (-> s
+      (str/trim)
+      (str/replace #" +" " ")))
+
+(defn- split-words [s]
+  (str/split s #" "))
+
+(defn- tokenize [s]
+  (->> s
+       (str/split-lines)
+       (map simplify)
+       (mapcat split-words)))
+
+(defn- apply-doc-info [x]
+  (apply handle-doc-info x))
+
 (defn- scan-doc-string [entry]
-  (let [doc          (:doc entry)
-        [descr meta] (->> (str/split-lines doc)
+  (let [[doc tokens] (->> entry
+                          :doc
+                          tokenize
                           (split-with (complement meta-info)))]
-    (reduce (fn [entry line]
-              (try
-                (if-let [token (meta-info line)]
-                  (handle-doc-info token entry line)
-                  entry)
-                (catch js/Error e
-                  entry)))
-              (assoc entry :doc (str/join "\n" descr))
-              meta)))
+    (assoc
+      (->> [entry tokens]
+           (iterate apply-doc-info)
+           (drop-while (comp seq second))
+           (first)
+           (first))
+      :doc (str/join " " doc))))
 
 (defmulti analyze-form
   (fn [form]
@@ -173,6 +188,20 @@
 (defn- parse-file [path]
   (.readFile fs path "utf-8" (partial parse (fn []))))
 
+(defn walk-sources
+  [path stat]
+  (if (or (not stat) (.isDirectory stat))
+    (mapcat
+     (fn [entry]
+       (let [subpath (str path "/" entry)
+             stat    (.statSync fs subpath)]
+         (walk-sources subpath stat)))
+     (seq (.readdirSync fs path)))
+    [path]))
+
 (set! *main-cli-fn*
   (fn []
-    (parse-file "src/domains/cljs/core.cljs")))
+    (doseq [file
+            (->> (walk-sources "src" nil)
+                 (filter (fn [s] (.match s #".cljs$"))))]
+      (parse-file file))))

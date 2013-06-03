@@ -6,9 +6,13 @@
 
 (aset mu "root" "templates")
 
+(defn sort-top-level [description]
+  (update-in description [:roots] (partial sort-by :name)))
+
 (defn render [description]
-  (let [out    (atom "")
-        stream (.compileAndRender mu "api.html" (clj->js description))]
+  (let [out         (atom "")
+        description (sort-top-level description)
+        stream      (.compileAndRender mu "api.html" (clj->js description))]
     (.on stream "data"
       (fn [data]
         (swap! out str (.toString data))))
@@ -35,19 +39,19 @@
 
 (defn update-function-model [events]
   (->> events
-       (filter #(= (:type %) "function"))
+       (filter (fn [m] (= (:type m) "function")))
        (filter :public)
        (generate-fn-detail)))
 
 (defn mustache-model [events]
-  (let [namespaces (partition-by #(= (:domain %) "ns") events)]
+  (let [namespaces (partition-by (fn [m] (= (:domain m) "ns")) events)]
     (reduce (fn [description [ns functions]]
               (let [functions (update-function-model functions)]
                 (update-in description
-                           [:namespaces]
+                           [:roots]
                            conj
                            (assoc (first ns) :functions functions))))
-            {:namespaces []}
+            {:roots []}
             (partition 2 namespaces))))
 
 (set! *main-cli-fn*
