@@ -25,6 +25,13 @@
       :output-to     "generators/renderer",
       :optimizations :simple
       :target        :nodejs}}
+    {:source-paths ["src/filters/jdoc"],
+     :id "jdoc",
+     :compiler
+     {:pretty-print  true,
+      :output-to     "filters/jdoc",
+      :optimizations :simple
+      :target        :nodejs}}
     {:source-paths ["src/garamond/"],
      :id "garamond",
      :compiler

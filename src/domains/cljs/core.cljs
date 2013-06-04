@@ -45,68 +45,6 @@
              syms)
         (vec))))
 
-(defn words [s]
-  (str/join " " s))
-
-(defn- meta-info [s]
-  (try
-    (when (string? s)
-      (when-let [match (.match s #"^@([a-z]+)")]
-        (keyword (aget match 1))))
-    (catch js/Error e)))
-
-(defn until-next-meta [in]
-  (split-with (complement meta-info) (drop 1 in)))
-
-(defmulti handle-doc-info
-  (fn [entry in]
-    (meta-info (first in))))
-
-(defmethod handle-doc-info :default
-  [entry in]
-  [entry (rest in)])
-
-(defmethod handle-doc-info :param
-  [entry in]
-  (let [[[n & doc] rest] (until-next-meta in)
-        doc              (words doc)
-        index            (->> (:parameters entry)
-                              (keep-indexed (fn [i v] (when (= (:name v) n) i)))
-                              (first))]
-    (if index
-      [(assoc-in entry [:parameters index :doc] doc) rest]
-      [entry rest])))
-
-(defn- simplify [s]
-  (-> s
-      (str/trim)
-      (str/replace #" +" " ")))
-
-(defn- split-words [s]
-  (str/split s #" "))
-
-(defn- tokenize [s]
-  (->> s
-       (str/split-lines)
-       (map simplify)
-       (mapcat split-words)))
-
-(defn- apply-doc-info [x]
-  (apply handle-doc-info x))
-
-(defn- scan-doc-string [entry]
-  (let [[doc tokens] (->> entry
-                          :doc
-                          tokenize
-                          (split-with (complement meta-info)))]
-    (assoc
-      (->> [entry tokens]
-           (iterate apply-doc-info)
-           (drop-while (comp seq second))
-           (first)
-           (first))
-      :doc (str/join " " doc))))
-
 (defmulti analyze-form
   (fn [form]
     (when (list? form)
@@ -129,21 +67,19 @@
     (meta sym)))
 
 (defmethod analyze-form 'defn [[_ sym doc  :as form]]
-  (-> (make-fn-doc-entry :fn
-        (name sym)
-        (maybe-doc doc)
-        (assoc (meta sym)
-          :parameters (get-defn-args form)))
-      (scan-doc-string)))
+  (make-fn-doc-entry :fn
+    (name sym)
+    (maybe-doc doc)
+    (assoc (meta sym)
+      :parameters (get-defn-args form))))
 
 (defmethod analyze-form 'defn- [[_ sym doc :as form]]
-  (-> (make-fn-doc-entry :fn
-        (name sym)
-        (maybe-doc doc)
-        (assoc (meta sym)
-        :private true
-        :parameters (get-defn-args form)))
-      (scan-doc-string)))
+  (make-fn-doc-entry :fn
+    (name sym)
+    (maybe-doc doc)
+    (assoc (meta sym)
+      :private true
+      :parameters (get-defn-args form))))
 
 (defmethod analyze-form 'defmulti [[_ sym doc]]
   (make-doc-entry :function
